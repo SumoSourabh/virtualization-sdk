@@ -4,7 +4,7 @@ import setuptools
 PYTHON_SRC = 'src/main/python'
 
 install_requires = [
-  "dvp-api == 1.7.0.dev0",
+  "dvp-api @ file://localhost//Users/sourabh.jain/PycharmProjects/virtualization-sdk/bin/dvp_api-1.7.3-py3-none-any.whl",
 ]
 
 with open(os.path.join(PYTHON_SRC, 'dlpx/virtualization/common/VERSION')) as version_file:

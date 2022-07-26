@@ -42,6 +42,10 @@ EXPECTED_STAGED_ARGS_BY_OP:
       - staged_source
       - repository
       - source_config
+    dummy_method_impl:
+      - staged_source
+      - repository
+      - source_config
   VirtualOperations:
     configure_impl:
       - virtual_source

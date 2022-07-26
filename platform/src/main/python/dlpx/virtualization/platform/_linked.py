@@ -33,6 +33,7 @@ class LinkedOperations(object):
         self.worker_impl = None
         self.mount_specification_impl = None
         self.source_size_impl = None
+        self.dummy_method_impl = None
 
     def pre_snapshot(self):
         def pre_snapshot_decorator(pre_snapshot_impl):
@@ -111,6 +112,16 @@ class LinkedOperations(object):
             return source_size_impl
 
         return source_size_decorator
+
+    def dummy_method(self):
+        def dummy_method_decorator(dummy_method_impl):
+            if self.dummy_method_impl:
+                raise OperationAlreadyDefinedError(Op.LINKED_DUMMY_METHOD)
+            self.dummy_method_impl = v.check_function(dummy_method_impl,
+                                                     Op.LINKED_DUMMY_METHOD)
+            return dummy_method_impl
+
+        return dummy_method_decorator
 
     def _internal_direct_pre_snapshot(self, request):
         """Pre Snapshot Wrapper for direct plugins.
@@ -840,3 +851,62 @@ class LinkedOperations(object):
         staged_source_size_response.return_value.database_size = source_size
 
         return staged_source_size_response
+
+    def _internal_staged_dummy_method(self, request):
+        """Staged Source Size Wrapper for staged plugins.
+
+        Executed as part of several operations to get the source size
+        of a staged source
+
+        Run source_size operation for a staged source.
+
+        Args:
+           request (StagedSourceSizeRequest): Source Size Request arguments.
+
+        Returns:
+           StagedSourceSizeResponse: A response containing the return value -
+           StagedSourceSizeResult which has source size. In
+           case of errors, response object will contain PluginErrorResult.
+        """
+        # Reasoning for method imports are in this file's docstring.
+        from generated.definitions import RepositoryDefinition
+        from generated.definitions import LinkedSourceDefinition
+        from generated.definitions import SourceConfigDefinition
+
+        #
+        # While linked.source_size() is not a required operation, this should
+        # not be called if it wasn't implemented.
+        #
+        if not self.dummy_method_impl:
+            raise OperationNotDefinedError(Op.LINKED_DUMMY_METHOD)
+
+        staged_source_definition = LinkedSourceDefinition.from_dict(
+            json.loads(request.staged_source.linked_source.parameters.json))
+        mount = Mount(
+            remote_environment=(RemoteEnvironment.from_proto(
+                request.staged_source.staged_mount.remote_environment)),
+            mount_path=request.staged_source.staged_mount.mount_path,
+            shared_path=request.staged_source.staged_mount.shared_path)
+        staged_source = StagedSource(
+            guid=request.staged_source.linked_source.guid,
+            source_connection=RemoteConnection.from_proto(
+                request.staged_source.source_connection),
+            parameters=staged_source_definition,
+            mount=mount,
+            staged_connection=RemoteConnection.from_proto(
+                request.staged_source.staged_connection))
+
+        repository = RepositoryDefinition.from_dict(
+            json.loads(request.repository.parameters.json))
+        source_config = SourceConfigDefinition.from_dict(
+            json.loads(request.source_config.parameters.json))
+
+        output = self.dummy_method_impl(
+            staged_source=staged_source,
+            repository=repository,
+            source_config=source_config)
+
+        staged_dummy_method_response = platform_pb2.StagedDummyMethodResponse()
+        staged_dummy_method_response.return_value.dummy_output = output
+
+        return staged_dummy_method_response

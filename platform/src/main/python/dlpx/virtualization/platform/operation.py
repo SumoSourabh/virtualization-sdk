@@ -18,6 +18,7 @@ class Operation(Enum):
     LINKED_WORKER = 'linked.worker()'
     LINKED_MOUNT_SPEC = 'linked.mount_specification()'
     LINKED_SOURCE_SIZE = 'linked.source_size()'
+    LINKED_DUMMY_METHOD = 'linked.dummy_method()'
 
     VIRTUAL_CONFIGURE = 'virtual.configure()'
     VIRTUAL_UNCONFIGURE = 'virtual.unconfigure()'

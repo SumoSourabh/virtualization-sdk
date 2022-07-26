@@ -369,6 +369,7 @@ def linked_operation():
     linked.worker_impl = None
     linked.mount_specification_impl = None
     linked.source_size_impl = None
+    linked.dummy_method_impl = None
 
     return linked
 
@@ -444,6 +445,7 @@ def plugin_manifest(upgrade_operation):
         'hasLinkedWorker': False,
         'hasLinkedMountSpecification': False,
         'hasLinkedSourceSize': False,
+        'hasLinkedDummyMethod': False,
         'hasVirtualConfigure': True,
         'hasVirtualUnconfigure': False,
         'hasVirtualReconfigure': True,

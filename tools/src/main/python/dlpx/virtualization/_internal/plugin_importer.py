@@ -360,6 +360,8 @@ def _prepare_manifest(entry_point, module_content):
         bool(plugin_object.linked.mount_specification_impl),
         'hasLinkedSourceSize':
         bool(plugin_object.linked.source_size_impl),
+        'hasLinkedDummyMethod':
+        bool(plugin_object.linked.dummy_method_impl),
         'hasVirtualConfigure':
         bool(plugin_object.virtual.configure_impl),
         'hasVirtualUnconfigure':

@@ -47,7 +47,8 @@ __all__ = [
     "run_powershell",
     "run_expect",
     "retrieve_credentials",
-    "upgrade_password"
+    "upgrade_password",
+    "dummy_libs_method"
 ]
 
 
@@ -518,3 +519,30 @@ def upgrade_password(password, username=None):
     response_to_str(response)
     upgrade_password_result = _handle_response(response)
     return json_format.MessageToDict(upgrade_password_result.credentials_supplier)
+
+
+def dummy_libs_method(command):
+    """
+    This is an internal wrapper around Virtualization's credentials-supplier conversion
+    API. It is intended for use during plugin upgrade when a plugin needs to transform
+    a password value into a more generic credentials supplier object.
+
+    Args:
+        password (str): Plain password string.
+        username (str, defaults to None): User name contained in the password
+            credential supplier to return.
+    Return:
+        Credentials supplier (dict) that supplies the given password and username.
+    """
+    from dlpx.virtualization._engine import libs as internal_libs
+
+    if not isinstance(command, six.string_types):
+        raise IncorrectArgumentTypeError(
+            'command', type(command), six.string_types[0])
+
+    dummy_libs_method_request = libs_pb2.DummyLibsMethodRequest()
+    dummy_libs_method_request.command = command
+
+    response = internal_libs.dummy_libs_method(dummy_libs_method_request)
+    response_to_str(response)
+    return _handle_response(response)
