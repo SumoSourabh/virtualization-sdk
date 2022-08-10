@@ -5,8 +5,8 @@ on:
     types:
       - closed
     branches:
-      - master
-      - develop
+      - testingmaster
+      - testingdevelop
 
 env:
   LABELS: ${{ join( github.event.pull_request.labels.*.name, ' ' ) }}
@@ -70,7 +70,7 @@ jobs:
         run: |
           PYTHON_INDEX=""
           for label in ${{ env.LABELS }}; do
-            if [ $label == "development-release" ] && [ ${{ github.base_ref }} == 'develop' ]
+            if [ $label == "development-release" ] && [ ${{ github.base_ref }} == 'testingdevelop' ]
             then
               PYTHON_INDEX="https://test.pypi.org/legacy/"
               if [[ ! $PACKAGE_VERSION =~ ^[0-9].[0-9].[0-9].[a-z]+[0-9]+$ ]]
@@ -78,7 +78,7 @@ jobs:
                 echo "Python Packages version $PACKAGE_VERSION does not match the development version format of <MAJOR>.<MINOR>.<PATCH>.dev<RELEASE>"
                 exit 1
               fi
-            elif [ $label == "production-release" ] && [ ${{ github.base_ref }} == 'develop' ]
+            elif [ $label == "production-release" ] && [ ${{ github.base_ref }} == 'testingdevelop' ]
             then
               PYTHON_INDEX="https://test.pypi.org/legacy/"
               if [[ ! $PACKAGE_VERSION =~ ^[0-9].[0-9].[0-9]$ ]]
@@ -86,7 +86,7 @@ jobs:
                 echo "Python Packages version $PACKAGE_VERSION does not match the production version format of <MAJOR>.<MINOR>.<PATCH>."
                 exit 1
               fi
-            elif [ $label == "production-release" ] && [ ${{ github.base_ref }} == 'master' ]
+            elif [ $label == "production-release" ] && [ ${{ github.base_ref }} == 'testingmaster' ]
             then
               PYTHON_INDEX="https://upload.pypi.org/legacy/"
               if [[ ! $PACKAGE_VERSION =~ ^[0-9].[0-9].[0-9]$ ]]
@@ -150,7 +150,7 @@ jobs:
   # - Bump up the version in VERSION files.
   ###
   postDevelopmentReleaseTasks:
-    if: github.base_ref == 'develop' && contains (github.event.pull_request.labels.*.name, 'development-release')
+    if: github.base_ref == 'testingdevelop' && contains (github.event.pull_request.labels.*.name, 'development-release')
     needs:
       - publishPythonPackages
     uses: ./.github/workflows/bump-version.yml
@@ -165,14 +165,14 @@ jobs:
   ###
   postTestPypiReleaseTask1:
     runs-on: ubuntu-latest
-    if: github.base_ref == 'develop' && contains (github.event.pull_request.labels.*.name, 'production-release')
+    if: github.base_ref == 'testingdevelop' && contains (github.event.pull_request.labels.*.name, 'production-release')
     needs:
       - publishPythonPackages
     steps:
       - name: Checkout project
         uses: actions/checkout@v3
         with:
-          ref: develop
+          ref: testingdevelop
 
       - name: Create release branch
         run: |
@@ -184,7 +184,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           source_branch: release
-          destination_branch: master
+          destination_branch: testingmaster
           pr_title: |
             Release version ${{ needs.publishPythonPackages.outputs.dvpversion }} to PyPi.
           pr_body: |
@@ -202,7 +202,7 @@ jobs:
   # - Bump up the version in VERSION files.
   ###
   postTestPypiReleaseTask2:
-    if: github.base_ref == 'develop' && contains (github.event.pull_request.labels.*.name, 'production-release')
+    if: github.base_ref == 'testingdevelop' && contains (github.event.pull_request.labels.*.name, 'production-release')
     needs:
       - postTestPypiReleaseTask1
     uses: ./.github/workflows/bump-version.yml
@@ -215,7 +215,7 @@ jobs:
   ###
   postPypiReleaseTasks:
     runs-on: ubuntu-latest
-    if: github.base_ref == 'master' && contains (github.event.pull_request.labels.*.name, 'production-release')
+    if: github.base_ref == 'testingmaster' && contains (github.event.pull_request.labels.*.name, 'production-release')
     needs:
       - publishPythonPackages
     steps:

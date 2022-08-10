@@ -4,15 +4,15 @@ on:
   # It is important to check the commits done to master, develop and release branches only.
   pull_request:
     branches:
-      - master
-      - develop
+      - testingmaster
+      - testingdevelop
       - release
   # Below is done to call this workflow when PR are created on master branch by another workflow.
   # Workflow initiated by a github_bot can not invoke another workflow.
   pull_request_review:
     types: [ submitted ]
     branches:
-      - master
+      - testingmaster
 
 jobs:
   pytest38:

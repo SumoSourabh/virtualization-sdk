@@ -55,7 +55,7 @@ jobs:
       - name: Verify development-release label
         if: contains (env.LABELS, 'development-release')
         run: |
-          if [ ${{ github.base_ref }} != 'develop' ]
+          if [ ${{ github.base_ref }} != 'testingdevelop' ]
           then
             echo "Pull request with development-release label must have base reference branch as develop."
             exit 1
@@ -75,7 +75,7 @@ jobs:
       - name: Verify production-release label
         if: contains (env.LABELS, 'production-release')
         run: |
-          if [ ${{ github.base_ref }} != 'master' ] && [ ${{ github.base_ref }} != 'develop' ]
+          if [ ${{ github.base_ref }} != 'testingmaster' ] && [ ${{ github.base_ref }} != 'testingdevelop' ]
           then
             echo "Pull request with production-release label must have base reference branch as master or develop."
             exit 1
