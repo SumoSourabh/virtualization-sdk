@@ -2,9 +2,9 @@ name: "Verify pull requests"
 
 on:
   pull_request:
-    types: [labeled, unlabeled]
+    types: [ labeled, unlabeled ]
   pull_request_review:
-    types: [submitted]
+    types: [ submitted ]
 
 env:
   LABELS: ${{ join( github.event.pull_request.labels.*.name, ' ' ) }}
@@ -55,7 +55,7 @@ jobs:
       - name: Verify development-release label
         if: contains (env.LABELS, 'development-release')
         run: |
-          if [ ${{ github.base_ref }} != 'develop' ]
+          if [ ${{ github.base_ref }} != 'testingdevelop' ]
           then
             echo "Pull request with development-release label must have base reference branch as develop."
             exit 1
@@ -75,7 +75,7 @@ jobs:
       - name: Verify production-release label
         if: contains (env.LABELS, 'production-release')
         run: |
-          if [ ${{ github.base_ref }} != 'master' ] && [ ${{ github.base_ref }} != 'develop' ]
+          if [ ${{ github.base_ref }} != 'testingmaster' ] && [ ${{ github.base_ref }} != 'testingdevelop' ]
           then
             echo "Pull request with production-release label must have base reference branch as master or develop."
             exit 1
