@@ -176,7 +176,7 @@ jobs:
 
       - name: Create release branch
         run: |
-          git checkout -b release develop
+          git checkout -b release testingdevelop
           git push origin release
 
       - name: Create pull request into master
