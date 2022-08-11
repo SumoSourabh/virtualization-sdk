@@ -204,6 +204,7 @@ jobs:
   postTestPypiReleaseTask2:
     if: github.base_ref == 'testingdevelop' && contains (github.event.pull_request.labels.*.name, 'production-release')
     needs:
+      - publishPythonPackages
       - postTestPypiReleaseTask1
     uses: ./.github/workflows/bump-version.yml
     with:
@@ -219,6 +220,9 @@ jobs:
     needs:
       - publishPythonPackages
     steps:
+      - name: Checkout project
+        uses: actions/checkout@v3
+
       - name: Delete release branch
         run: |
           git push origin --delete release
