@@ -12,7 +12,6 @@ env:
   LABELS: ${{ join( github.event.pull_request.labels.*.name, ' ' ) }}
   COMMON_PATH: src/main/python/dlpx/virtualization
   VERSION_FILES: './common/path/common/VERSION ./dvp/path/VERSION ./libs/path/libs/VERSION ./platform/path/platform/VERSION ./tools/path/_internal/VERSION'
-  PACKAGE_PREFIX: virtualization-sdk
 
 jobs:
   ###
