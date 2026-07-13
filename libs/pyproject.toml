@@ -25,7 +25,11 @@ classifiers = [
 ]
 # dvp-common pin is kept in sync with [project].version via .bumpversion.cfg.
 dependencies = [
+<<<<<<< syncdevelop
     "dvp-api == 1.10.0",
+=======
+    "dvp-api == 1.10.0.dev3",
+>>>>>>> syncmaster
     "dvp-common == 5.1.0",
     "six >= 1.17, < 1.18",
 ]
